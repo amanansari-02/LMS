@@ -59,7 +59,7 @@ export default function ForgotPasswordForm() {
         <div className="flex flex-col items-center gap-2 text-center">
           <h1 className="text-2xl font-bold">Forgot Password</h1>
           <p className="text-muted-foreground text-sm text-balance">
-            Enter your email below to change your account
+            Enter your email below to reset your password.
           </p>
         </div>
         <div className="grid gap-6">
@@ -85,7 +85,11 @@ export default function ForgotPasswordForm() {
           </div>
           <div className="grid gap-3"></div>
           <Button type="submit" className="w-full" disabled={loading}>
-            {loading ? <Loader2 className=" animate-spin" /> : "Login"}
+            {loading ? (
+              <Loader2 className=" animate-spin" />
+            ) : (
+              "Forgot Password"
+            )}
           </Button>
         </div>
         <div className="text-center text-sm">

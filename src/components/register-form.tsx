@@ -5,12 +5,12 @@ import { useForm } from "react-hook-form";
 import { z } from "zod";
 import { zodResolver } from "@hookform/resolvers/zod";
 import {
-    Form,
-    FormControl,
-    FormField,
-    FormItem,
-    FormLabel,
-    FormMessage,
+  Form,
+  FormControl,
+  FormField,
+  FormItem,
+  FormLabel,
+  FormMessage,
 } from "./ui/form";
 import { useState } from "react";
 import { Eye, EyeOff, Loader2 } from "lucide-react";
@@ -20,168 +20,167 @@ import { toast } from "sonner";
 import { useNavigate } from "react-router-dom";
 
 const registerSchema = z.object({
-    first_name: z.string().min(1, 'First name is required'),
-    last_name: z.string().optional(),
-    email: z
-        .string()
-        .min(1, "Email is required")
-        .email({ message: "Invalid email address" }),
-    password: z
-        .string()
-        .min(5, { message: "Password must be at least 5 characters" }),
+  first_name: z.string().min(1, "First name is required"),
+  last_name: z.string().optional(),
+  email: z
+    .string()
+    .min(1, "Email is required")
+    .email({ message: "Invalid email address" }),
+  password: z
+    .string()
+    .min(5, { message: "Password must be at least 5 characters" }),
 });
 
 export function RegisterForm({
-    className,
-    ...props
+  className,
+  ...props
 }: React.ComponentProps<"form">) {
-    const form = useForm<z.infer<typeof registerSchema>>({
-        resolver: zodResolver(registerSchema),
-        defaultValues: {
-            first_name: "",
-            last_name: "",
-            email: "",
-            password: "",
-        },
-    });
-    const [showPassword, setShowPassword] = useState<boolean>(false);
-    const [loading, setLoading] = useState<boolean>(false);
-    const navigate = useNavigate();
+  const form = useForm<z.infer<typeof registerSchema>>({
+    resolver: zodResolver(registerSchema),
+    defaultValues: {
+      first_name: "",
+      last_name: "",
+      email: "",
+      password: "",
+    },
+  });
+  const [showPassword, setShowPassword] = useState<boolean>(false);
+  const [loading, setLoading] = useState<boolean>(false);
+  const navigate = useNavigate();
 
-    // Form submit
-    const onSubmit = async (data: z.infer<typeof registerSchema>) => {
-        setLoading(true);
-        try {
-            const res = await UserService.register(data);
+  // Form submit
+  const onSubmit = async (data: z.infer<typeof registerSchema>) => {
+    setLoading(true);
+    try {
+      const res = await UserService.register(data);
 
-            if (res.data.status === HttpStatusCode.BadRequest) {
-                toast.error(res.data.message);
-            } else {
-                toast.success(res.data.message);
-                // window.location.href = "/admin";
-                navigate("/login");
-                form.reset();
-            }
-        } catch (error) {
-            console.log("login error:", error);
-        } finally {
-            setLoading(false);
-        }
-    };
+      if (res.data.status === HttpStatusCode.BadRequest) {
+        toast.error(res.data.message);
+      } else {
+        toast.success(res.data.message);
+        // window.location.href = "/admin";
+        navigate("/login");
+        form.reset();
+      }
+    } catch (error) {
+      console.log("login error:", error);
+    } finally {
+      setLoading(false);
+    }
+  };
 
-    return (
-        <Form {...form}>
-            <form
-                onSubmit={form.handleSubmit(onSubmit)}
-                className={cn("flex flex-col gap-6", className)}
-                {...props}
-            >
-                <div className="flex flex-col items-center gap-2 text-center">
-                    <h1 className="text-2xl font-bold">Login to your account</h1>
-                    <p className="text-muted-foreground text-sm text-balance">
-                        Enter your email below to login to your account
-                    </p>
-                </div>
-                <div className="grid gap-6">
-                    <div className="grid gap-3">
-                        <FormField
-                            control={form.control}
-                            name="first_name"
-                            render={({ field }) => (
-                                <FormItem>
-                                    <FormLabel>Email</FormLabel>
-                                    <FormControl>
-                                        <Input
-                                            {...field}
-                                            id="first_name"
-                                            type="text"
-                                            placeholder="John"
-                                        />
-                                    </FormControl>
-                                    <FormMessage className="text-left" />
-                                </FormItem>
-                            )}
-                        />
+  return (
+    <Form {...form}>
+      <form
+        onSubmit={form.handleSubmit(onSubmit)}
+        className={cn("flex flex-col gap-6", className)}
+        {...props}
+      >
+        <div className="flex flex-col items-center gap-2 text-center">
+          <h1 className="text-2xl font-bold">Register to your account</h1>
+          <p className="text-muted-foreground text-sm text-balance">
+            Enter your email below to create a new account
+          </p>
+        </div>
+        <div className="grid gap-6">
+          <div className="grid gap-3">
+            <FormField
+              control={form.control}
+              name="first_name"
+              render={({ field }) => (
+                <FormItem>
+                  <FormLabel>Email</FormLabel>
+                  <FormControl>
+                    <Input
+                      {...field}
+                      id="first_name"
+                      type="text"
+                      placeholder="John"
+                    />
+                  </FormControl>
+                  <FormMessage className="text-left" />
+                </FormItem>
+              )}
+            />
+          </div>
+          <div className="grid gap-3">
+            <FormField
+              control={form.control}
+              name="last_name"
+              render={({ field }) => (
+                <FormItem>
+                  <FormLabel>Email</FormLabel>
+                  <FormControl>
+                    <Input
+                      {...field}
+                      id="last_name"
+                      type="text"
+                      placeholder="Doe"
+                    />
+                  </FormControl>
+                  <FormMessage className="text-left" />
+                </FormItem>
+              )}
+            />
+          </div>
+          <div className="grid gap-3">
+            <FormField
+              control={form.control}
+              name="email"
+              render={({ field }) => (
+                <FormItem>
+                  <FormLabel>Email</FormLabel>
+                  <FormControl>
+                    <Input
+                      {...field}
+                      id="email"
+                      type="email"
+                      placeholder="m@example.com"
+                    />
+                  </FormControl>
+                  <FormMessage className="text-left" />
+                </FormItem>
+              )}
+            />
+          </div>
+          <div className="grid gap-3">
+            <FormField
+              control={form.control}
+              name="password"
+              render={({ field }) => (
+                <FormItem>
+                  <FormLabel>Password</FormLabel>
+                  <FormControl>
+                    <div className="relative">
+                      <Input
+                        {...field}
+                        id="password"
+                        type={showPassword ? "text" : "password"}
+                        placeholder="Enter your password"
+                      />
+                      <button
+                        type="button"
+                        onClick={() => setShowPassword(!showPassword)}
+                        className="absolute right-2 top-1/2 -translate-y-1/2 text-gray-500"
+                      >
+                        {showPassword ? (
+                          <EyeOff size={20} />
+                        ) : (
+                          <Eye size={20} />
+                        )}
+                      </button>
                     </div>
-                    <div className="grid gap-3">
-                        <FormField
-                            control={form.control}
-                            name="last_name"
-                            render={({ field }) => (
-                                <FormItem>
-                                    <FormLabel>Email</FormLabel>
-                                    <FormControl>
-                                        <Input
-                                            {...field}
-                                            id="last_name"
-                                            type="text"
-                                            placeholder="Doe"
-                                        />
-                                    </FormControl>
-                                    <FormMessage className="text-left" />
-                                </FormItem>
-                            )}
-                        />
-                    </div>
-                    <div className="grid gap-3">
-                        <FormField
-                            control={form.control}
-                            name="email"
-                            render={({ field }) => (
-                                <FormItem>
-                                    <FormLabel>Email</FormLabel>
-                                    <FormControl>
-                                        <Input
-                                            {...field}
-                                            id="email"
-                                            type="email"
-                                            placeholder="m@example.com"
-                                        />
-                                    </FormControl>
-                                    <FormMessage className="text-left" />
-                                </FormItem>
-                            )}
-                        />
-                    </div>
-                    <div className="grid gap-3">
-
-                        <FormField
-                            control={form.control}
-                            name="password"
-                            render={({ field }) => (
-                                <FormItem>
-                                    <FormLabel>Password</FormLabel>
-                                    <FormControl>
-                                        <div className="relative">
-                                            <Input
-                                                {...field}
-                                                id="password"
-                                                type={showPassword ? "text" : "password"}
-                                                placeholder="Enter your password"
-                                            />
-                                            <button
-                                                type="button"
-                                                onClick={() => setShowPassword(!showPassword)}
-                                                className="absolute right-2 top-1/2 -translate-y-1/2 text-gray-500"
-                                            >
-                                                {showPassword ? (
-                                                    <EyeOff size={20} />
-                                                ) : (
-                                                    <Eye size={20} />
-                                                )}
-                                            </button>
-                                        </div>
-                                    </FormControl>
-                                    <FormMessage className="text-left" />
-                                </FormItem>
-                            )}
-                        />
-                        {/* <Input id="password" type="password" /> */}
-                    </div>
-                    <Button type="submit" className="w-full" disabled={loading}>
-                        {loading ? <Loader2 className=" animate-spin" /> : "Login"}
-                    </Button>
-                    {/* <div className="after:border-border relative text-center text-sm after:absolute after:inset-0 after:top-1/2 after:z-0 after:flex after:items-center after:border-t">
+                  </FormControl>
+                  <FormMessage className="text-left" />
+                </FormItem>
+              )}
+            />
+            {/* <Input id="password" type="password" /> */}
+          </div>
+          <Button type="submit" className="w-full" disabled={loading}>
+            {loading ? <Loader2 className=" animate-spin" /> : "Register"}
+          </Button>
+          {/* <div className="after:border-border relative text-center text-sm after:absolute after:inset-0 after:top-1/2 after:z-0 after:flex after:items-center after:border-t">
             <span className="bg-background text-muted-foreground relative z-10 px-2">
               Or continue with
             </span>
@@ -195,14 +194,14 @@ export function RegisterForm({
             </svg>
             Login with GitHub
           </Button> */}
-                </div>
-                <div className="text-center text-sm">
-                    Have an account?{" "}
-                    <a href="/login" className="underline underline-offset-4">
-                        Sign in
-                    </a>
-                </div>
-            </form>
-        </Form>
-    );
+        </div>
+        <div className="text-center text-sm">
+          Have an account?{" "}
+          <a href="/login" className="underline underline-offset-4">
+            Sign in
+          </a>
+        </div>
+      </form>
+    </Form>
+  );
 }

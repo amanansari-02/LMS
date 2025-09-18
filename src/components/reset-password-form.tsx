@@ -150,7 +150,7 @@ export default function ResetPasswordForm() {
           </div>
           <div className="grid gap-3"></div>
           <Button type="submit" className="w-full" disabled={loading}>
-            {loading ? <Loader2 className=" animate-spin" /> : "Login"}
+            {loading ? <Loader2 className=" animate-spin" /> : "Reset Password"}
           </Button>
         </div>
         {/* <div className="text-center text-sm">
