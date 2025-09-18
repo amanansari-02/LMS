@@ -294,12 +294,12 @@ export default function EditModule({
           Array.isArray(moduleToUse.skills) &&
           moduleToUse.skills.length > 0
         ) {
-        //   const skillIds = moduleToUse.skills.map((skill) => {
-        //     if (typeof skill === "object" && skill.id) {
-        //       return skill.id.toString();
-        //     }
-        //     return skill.toString();
-        //   });
+          //   const skillIds = moduleToUse.skills.map((skill) => {
+          //     if (typeof skill === "object" && skill.id) {
+          //       return skill.id.toString();
+          //     }
+          //     return skill.toString();
+          //   });
         } else {
           console.log("No skills found, setting empty array");
           // setSelectedSkill([]);
@@ -401,12 +401,6 @@ export default function EditModule({
                 Skills *
               </Label>
 
-              {/* Debug info */}
-              <div className="text-xs text-gray-400 mb-2">
-                Debug: selectedSkill = {JSON.stringify(selectedSkill)}, skills
-                count = {skills.length}
-              </div>
-
               <MultiSelect
                 options={skills.map((skill) => ({
                   label: skill.name,
@@ -506,8 +500,6 @@ export default function EditModule({
                   </div>
                 )}
 
-                {/* Debug info */}
-
                 <Button
                   type="button"
                   variant="outline"
@@ -579,12 +571,6 @@ export default function EditModule({
                     </div>
                   </div>
                 )}
-
-                {/* Debug info */}
-                <div className="text-xs text-gray-400 mb-2">
-                  Debug: existingVideoUrl = "{existingVideoUrl}", videoFile ={" "}
-                  {videoFile ? videoFile.name : "null"}
-                </div>
 
                 <Button
                   type="button"
