@@ -14,6 +14,7 @@ import { useEffect, useState } from "react";
 import { toast } from "sonner";
 import { ConfirmationDialog } from "@/components/ConfirmationDialog";
 import type { IModule, IModuleView } from "@/interface/module";
+import { Pagination } from "@/components/pagination";
 
 export default function Module() {
   const [modules, setModules] = useState<IModule[]>([]);
@@ -24,6 +25,12 @@ export default function Module() {
   const [deleteId, setDeleteId] = useState<number | null>(null);
   const [isDeleteOpen, setIsDeleteOpen] = useState(false);
   const [isDeleting, setIsDeleting] = useState(false);
+  const [currentPage, setCurrentPage] = useState(1);
+  const [itemsPerPage] = useState(10); // change as needed
+
+  useEffect(() => {
+    setCurrentPage(1);
+  }, [searchValue]);
 
   const fetchModules = async () => {
     setLoading(true);
@@ -68,6 +75,23 @@ export default function Module() {
       setIsDeleting(false);
     }
   };
+
+  const filteredModules = modules.filter((m) => {
+    const search = searchValue.toLowerCase();
+    return (
+      m.title.toLowerCase().includes(search) ||
+      m.description.toLowerCase().includes(search) ||
+      m.video_time.toString().includes(search)
+    );
+  });
+
+  const totalPages = Math.ceil(filteredModules.length / itemsPerPage);
+
+  const paginatedModules = filteredModules.slice(
+    (currentPage - 1) * itemsPerPage,
+    currentPage * itemsPerPage
+  );
+
   return (
     <div className="p-4 sm:p-6 lg:p-8">
       <div className="flex flex-col gap-4 lg:flex-row lg:justify-between lg:items-center">
@@ -104,16 +128,6 @@ export default function Module() {
           </thead>
           <tbody>
             {(() => {
-              const filteredModules = modules.filter((m) => {
-                const search = searchValue.toLowerCase();
-
-                return (
-                  m.title.toLowerCase().includes(search) ||
-                  m.description.toLowerCase().includes(search) ||
-                  m.video_time.toString().includes(search) // ✅ match video_time too
-                );
-              });
-
               if (loading) {
                 return (
                   <tr>
@@ -124,7 +138,7 @@ export default function Module() {
                 );
               }
 
-              if (filteredModules.length === 0) {
+              if (paginatedModules.length === 0) {
                 return (
                   <tr>
                     <td colSpan={5} className="h-24 text-center text-gray-500">
@@ -136,7 +150,7 @@ export default function Module() {
                 );
               }
 
-              return filteredModules.map((module) => (
+              return paginatedModules.map((module) => (
                 <tr
                   key={module.id}
                   className="border-t hover:bg-gray-50 transition"
@@ -180,6 +194,17 @@ export default function Module() {
             })()}
           </tbody>
         </table>
+      </div>
+      <div className="flex justify-between items-center mt-6">
+        <p className="text-sm text-gray-600">
+          Page {currentPage} of {totalPages}
+        </p>
+
+        <Pagination
+          currentPage={currentPage}
+          totalPages={totalPages}
+          onPageChange={(page) => setCurrentPage(page)}
+        />
       </div>
 
       {/* Edit Module Dialog */}

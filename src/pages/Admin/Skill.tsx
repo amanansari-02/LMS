@@ -37,6 +37,7 @@ import { HttpStatusCode } from "axios";
 import { toast } from "sonner";
 import type { ISKILL } from "@/interface/skill";
 import { ConfirmationDialog } from "@/components/ConfirmationDialog";
+import { Pagination } from "@/components/pagination";
 
 const skillSchema = z.object({
   name: z.string().min(1, "Name is required"),
@@ -52,6 +53,8 @@ export default function Skill() {
   const [isDelete, setIsDelete] = useState(false);
   const [deleteId, setDeleteId] = useState<number | null>(null);
   const [isLoading, setIsLoading] = useState(false);
+  const [currentPage, setCurrentPage] = useState(1);
+  const [itemsPerPage] = useState(10); // items per page
 
   const form = useForm<z.infer<typeof skillSchema>>({
     resolver: zodResolver(skillSchema),
@@ -141,6 +144,21 @@ export default function Skill() {
       setEditingSkill(null);
     }
   }, [addSkillOpen]);
+
+  useEffect(() => {
+    setCurrentPage(1);
+  }, [searchValue]);
+
+  const filteredSkills = skills.filter((skill) =>
+    skill.name.toLowerCase().includes(searchValue.toLowerCase())
+  );
+
+  const totalPages = Math.ceil(filteredSkills.length / itemsPerPage);
+
+  const paginatedSkills = filteredSkills.slice(
+    (currentPage - 1) * itemsPerPage,
+    currentPage * itemsPerPage
+  );
 
   return (
     <div className="p-4 sm:p-6 lg:p-8 ">
@@ -257,78 +275,74 @@ export default function Skill() {
             </tr>
           </thead>
           <tbody>
-            {viewLoading ?
+            {viewLoading ? (
               <tr>
                 <td colSpan={3} className="h-24 text-center text-gray-500">
                   Loading...
                 </td>
               </tr>
-              : skills.length > 0 ? (
-                skills
-                  .filter((skill) =>
-                    skill.name.toLowerCase().includes(searchValue.toLowerCase())
-                  )
-                  .map((skill) => (
-                    <tr
-                      key={skill.id}
-                      className="border-t hover:bg-gray-50 transition"
-                    >
-                      <td className="px-4 py-2 font-medium">{skill.name}</td>
-                      <td className="px-4 py-2">
-                        {formatDate(skill.created_at ?? "")}
-                      </td>
-                      <td className="px-4 py-2 text-right">
-                        <DropdownMenu>
-                          <DropdownMenuTrigger asChild>
-                            <Button variant="ghost" size="sm">
-                              <MoreHorizontal />
-                            </Button>
-                          </DropdownMenuTrigger>
-                          <DropdownMenuContent align="end">
-                            <DropdownMenuItem
-                              onClick={() => {
-                                setEditingSkill(skill);
-                                setAddSkillOpen(true);
-                                form.setValue("name", skill.name);
-                              }}
-                            >
-                              <Edit2 className="mr-2 h-4 w-4" /> Edit
-                            </DropdownMenuItem>
-                            <DropdownMenuItem
-                              onClick={() => {
-                                setIsDelete(true);
-                                setDeleteId(skill.id);
-                              }}
-                            >
-                              <Trash2 className="mr-2 h-4 w-4" /> Delete
-                            </DropdownMenuItem>
-                          </DropdownMenuContent>
-                        </DropdownMenu>
-                      </td>
-                    </tr>
-                  ))
-              ) : (
-                <tr>
-                  <td colSpan={3} className="h-24 text-center text-gray-500">
-                    No skills found
+            ) : paginatedSkills.length > 0 ? (
+              paginatedSkills.map((skill) => (
+                <tr
+                  key={skill.id}
+                  className="border-t hover:bg-gray-50 transition"
+                >
+                  <td className="px-4 py-2 font-medium">{skill.name}</td>
+                  <td className="px-4 py-2">
+                    {formatDate(skill.created_at ?? "")}
+                  </td>
+                  <td className="px-4 py-2 text-right">
+                    <DropdownMenu>
+                      <DropdownMenuTrigger asChild>
+                        <Button variant="ghost" size="sm">
+                          <MoreHorizontal />
+                        </Button>
+                      </DropdownMenuTrigger>
+                      <DropdownMenuContent align="end">
+                        <DropdownMenuItem
+                          onClick={() => {
+                            setEditingSkill(skill);
+                            setAddSkillOpen(true);
+                            form.setValue("name", skill.name);
+                          }}
+                        >
+                          <Edit2 className="mr-2 h-4 w-4" /> Edit
+                        </DropdownMenuItem>
+                        <DropdownMenuItem
+                          onClick={() => {
+                            setIsDelete(true);
+                            setDeleteId(skill.id);
+                          }}
+                        >
+                          <Trash2 className="mr-2 h-4 w-4" /> Delete
+                        </DropdownMenuItem>
+                      </DropdownMenuContent>
+                    </DropdownMenu>
                   </td>
                 </tr>
-              )}
+              ))
+            ) : (
+              <tr>
+                <td colSpan={3} className="h-24 text-center text-gray-500">
+                  No skills found
+                </td>
+              </tr>
+            )}
           </tbody>
         </table>
       </div>
 
       {/* Pagination */}
-      <div className="flex flex-col sm:flex-row justify-between items-center mt-6 gap-3">
-        <p className="text-sm text-gray-600">Page 1 of 1</p>
-        <div className="flex gap-2">
-          <Button variant="outline" size="sm" disabled>
-            Previous
-          </Button>
-          <Button variant="outline" size="sm" disabled>
-            Next
-          </Button>
-        </div>
+      <div className="flex justify-between items-center mt-6">
+        <p className="text-sm text-gray-600">
+          Page {currentPage} of {totalPages}
+        </p>
+
+        <Pagination
+          currentPage={currentPage}
+          totalPages={totalPages}
+          onPageChange={(page) => setCurrentPage(page)}
+        />
       </div>
     </div>
   );
