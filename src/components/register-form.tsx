@@ -89,7 +89,7 @@ export function RegisterForm({
               name="first_name"
               render={({ field }) => (
                 <FormItem>
-                  <FormLabel>Email</FormLabel>
+                  <FormLabel>First Name</FormLabel>
                   <FormControl>
                     <Input
                       {...field}
@@ -109,7 +109,7 @@ export function RegisterForm({
               name="last_name"
               render={({ field }) => (
                 <FormItem>
-                  <FormLabel>Email</FormLabel>
+                  <FormLabel>Last Name</FormLabel>
                   <FormControl>
                     <Input
                       {...field}
